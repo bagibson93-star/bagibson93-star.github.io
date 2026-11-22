@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-ink: #0a0d14;
+}
+
+:root {
+  /* Dark, premium theme — edit these to re-skin the whole site */
+  --bg: #07090f;        /* near-black navy */
+  --bg-soft: #0c111b;
+  --fg: #f5f7fa;
+  --muted: #a7b0c0;
+  --line: #1c2433;
+  --card: #0f1522;
+  --accent: #f5b041;    /* lantern amber */
+  --accent-strong: #ffc56b;
+  --accent-fg: #160f05;
+  --amber: #f5b041;
+  --red: #ff5a52;       /* taillight red */
+  color-scheme: dark;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+section[id] { scroll-margin-top: 5rem; }
+
+/* Visible focus for keyboard and switch users */
+:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Hero ---------- */
+.hero-media {
+  transform-origin: 55% 40%;
+  animation: kenburns 22s cubic-bezier(.2,.6,.2,1) both;
+}
+@keyframes kenburns {
+  from { transform: scale(1.14); }
+  to   { transform: scale(1.03); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+  animation: reveal 1s cubic-bezier(.2,.7,.2,1) forwards;
+  animation-delay: calc(var(--i, 0) * 140ms + 250ms);
+}
+@keyframes reveal {
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+/* Film grain overlay (SVG noise as data URI, purely decorative) */
+.grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: .07;
+  mix-blend-mode: overlay;
+}
+
+/* Scroll-driven parallax: media scales + darkens, copy drifts up + fades */
+@supports (animation-timeline: scroll()) {
+  .hero-parallax {
+    animation: hero-media-scroll linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+  .hero-copy-scroll {
+    animation: hero-copy-scroll linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 70vh;
+  }
+  @keyframes hero-media-scroll {
+    to { transform: scale(1.1) translateY(6%); }
+  }
+  @keyframes hero-copy-scroll {
+    to { transform: translateY(-18%); opacity: 0; }
+  }
+}
+
+/* Subtle animated rain streaks (decorative) */
+.rain {
+  background-image:
+    repeating-linear-gradient(105deg, transparent 0 46px, rgba(255,255,255,.07) 46px 47px, transparent 47px 120px),
+    repeating-linear-gradient(100deg, transparent 0 80px, rgba(255,255,255,.05) 80px 81px, transparent 81px 190px);
+  background-size: 300px 600px, 420px 900px;
+  animation: rain .9s linear infinite;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 90%);
+}
+@keyframes rain {
+  to { background-position: -110px 600px, -160px 900px; }
+}
+
+.scroll-cue { animation: cue 2.2s ease-in-out infinite; }
+@keyframes cue {
+  0%, 100% { transform: translateY(0); opacity: .5; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* Section fade-in on scroll (progressive enhancement) */
+@supports (animation-timeline: view()) {
+  .fade-up {
+    animation: fade-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal { opacity: 1; transform: none; filter: none; }
+  .hero-video { display: none; }
+  .rain { display: none; }
+}
