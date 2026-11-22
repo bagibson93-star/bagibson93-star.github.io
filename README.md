@@ -1,4 +1,4 @@
-# Brian Gibson — Portfolio
+Portfolio
 
 A fast, accessible, fully static portfolio built with Next.js (App Router), TypeScript and Tailwind CSS v4.
 `npm run build` produces a plain static site in `out/` that works on Vercel, Cloudflare Pages or GitHub Pages.
